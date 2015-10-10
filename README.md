@@ -20,7 +20,7 @@ When a blob event happens a notification will be sent via the app's websocket se
 
 ## WebSocket Server
 
-The WebSocket server is listening on port 110001.
+The WebSocket server is listening on port 11001.
 
 The websocket message contains a string in the following format:
 
