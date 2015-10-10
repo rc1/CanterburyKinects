@@ -32,7 +32,7 @@ The websocket message contains a string in the following format:
 
 The OSC Message has the following signature:
 
-+ Address: `/kinect/`
++ Address: `/kinect/on`, `/kinect/off` or `/kinect/off`
 + Int: `kinect-device-id`
 + Int: `blob-id`
 + Int: `cell-x-position`
