@@ -16,7 +16,7 @@
 
 # WebSocket & OSC
 
-When a blob event happens a notification will be sent via the app's websocket server or via it OSC sender. The blob event can be one of three actions: on (when a blob appears), off (when a blob moves) or moved.
+When a blob event happens a notification will be sent via the app's websocket server or via its OSC sender. The blob event can be one of three actions: on (when a blob appears), off (when a blob moves) or moved.
 
 ## WebSocket Server
 
