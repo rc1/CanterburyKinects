@@ -150,6 +150,7 @@ void send( ofxLibwebsockets::Server &ws, ofxKinect &kinect, string action, int b
     ws.send( message );
 }
 
+
 void send( ofxOscSender &sender, ofxKinect &kinect, string action, int blobId, ofVec2f cellPosition, ofVec3f position, int columns, int rows ) {
     ofxOscMessage m;
     m.setAddress( "/kinect/" + action );
@@ -162,7 +163,19 @@ void send( ofxOscSender &sender, ofxKinect &kinect, string action, int blobId, o
     m.addFloatArg( position.z );
     m.addIntArg( columns );
     m.addIntArg( rows );
-    sender.sendMessage(m, false);
+    try {
+        sender.sendMessage(m, false);
+    } catch ( int e ) {
+        ofLogError() << "Failed to send OSC message";
+    }
+}
+
+void setupOsc( ofxOscSender &sender, string host, int port ) {
+    try {
+        sender.setup( host, port );
+    } catch ( int e ) {
+        ofSystemAlertDialog( "Failed to open OSC when opening " + host + ":" + ofToString( port, 0 ) );
+    }
 }
 
 #pragma mark - Life Cycle
@@ -181,7 +194,7 @@ void ofApp::setup () {
     viewGui.add( drawBlobPoints.setup( "Draw blob points", true ) );
     viewGui.add( gridRowsSlider.setup( "Number of rows", 5, 1, 20 ) );
     viewGui.add( gridColumnsSlider.setup( "Number of columns", 5, 1, 20 ) );
-    
+
     oscGui.setup( "OSC", "settings.xml", 20, 280 );
     oscGui.add( hostLabel.setup( "Host", "192.168.0.255" ) );
     oscGui.add( updateHostButton.setup( "Change host" ) );
@@ -198,7 +211,8 @@ void ofApp::setup () {
     detectionGui.add( cropBoxMin.setup( "Crop box min", ofVec3f(-10, -10, -10), ofVec3f(-10, -10, -10), ofVec3f(10, 10, 10) ) );
     detectionGui.add( cropBoxMax.setup( "Crop box max", ofVec3f(10, 10, 10), ofVec3f(-10, -10, -10), ofVec3f(10, 10, 10) ) );
     detectionGui.add( thresh3D.setup( "Threshold 3d", ofVec3f(0.2,0.2,0.3), ofVec3f(0,0,0), ofVec3f(1,1,1) ) );
-    detectionGui.add( thresh2D.setup( "Threshold 2d", 0.98, 1.0f, 0.001f ) );
+    thresh2D.setup( "Threshold 2d", 1, 1.0f, 1.0f );
+    //detectionGui.add( thresh2D.setup( "Threshold 2d", 0.98, 1f, 1.0f ) );
     detectionGui.add( maxBlobs.setup( "Max blobs", 10, 0, 30 ) );
     detectionGui.add( learnBackgroundToggle.setup( "Learn Background", false ) );
     
@@ -233,6 +247,10 @@ void ofApp::setup () {
     kinectId0ToggleEmitter.bind( kinectId0Toggle );
     kinectId0ToggleEmitter.released += [this](bool value){
         kinectId1Toggle = !value;
+        kinect.close();
+        kinect.clear();
+        kinect.init();
+        kinect.setRegistration( true );
         kinect.open( value ? 0 : 1 );
     };
     
@@ -289,7 +307,7 @@ void ofApp::setup () {
         if ( host.length() > 0 ) {
             hostLabel = host;
         }
-        oscSender.setup( hostLabel, ofToInt( portLabel ) );
+        setupOsc( oscSender, hostLabel, ofToInt( portLabel ) );
     };
     
     portButtonEmitter.bind( updatePortButton );
@@ -298,10 +316,11 @@ void ofApp::setup () {
         if ( host.length() > 0 ) {
             portLabel = host;
         }
-        oscSender.setup( hostLabel, ofToInt( portLabel ) );
+        setupOsc( oscSender, hostLabel, ofToInt( portLabel ) );
     };
     
-    oscSender.setup( hostLabel, ofToInt( portLabel ) );
+    setupOsc( oscSender, hostLabel, ofToInt( portLabel ) );
+
 }
 
 void ofApp::update () {
