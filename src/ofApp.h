@@ -9,7 +9,7 @@
 #include "ofxOpenCv.h"
 #include "ofxCv.h"
 #include "ofxGui.h"
-#include "ofxOsc.h"
+//#include "ofxOsc.h"
 // Libs
 #include "Emitters.h"
 
@@ -33,7 +33,7 @@ class ofApp : public ofBaseApp {
     ofxLibwebsockets::Server websocketServer;
     
     // ##ÊOSC
-    ofxOscSender oscSender;
+    //ofxOscSender oscSender;
     
     // #ÊKinect
     ofxKinect kinect;

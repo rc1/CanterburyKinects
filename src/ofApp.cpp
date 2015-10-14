@@ -151,32 +151,32 @@ void send( ofxLibwebsockets::Server &ws, ofxKinect &kinect, string action, int b
 }
 
 
-void send( ofxOscSender &sender, ofxKinect &kinect, string action, int blobId, ofVec2f cellPosition, ofVec3f position, int columns, int rows ) {
-    ofxOscMessage m;
-    m.setAddress( "/kinect/" + action );
-    m.addIntArg( kinect.getDeviceId() );
-    m.addIntArg( blobId );
-    m.addIntArg( cellPosition.x );
-    m.addIntArg( cellPosition.y );
-    m.addFloatArg( position.x );
-    m.addFloatArg( position.y );
-    m.addFloatArg( position.z );
-    m.addIntArg( columns );
-    m.addIntArg( rows );
-    try {
-        sender.sendMessage(m, false);
-    } catch ( int e ) {
-        ofLogError() << "Failed to send OSC message";
-    }
-}
+//void send( ofxOscSender &sender, ofxKinect &kinect, string action, int blobId, ofVec2f cellPosition, ofVec3f position, int columns, int rows ) {
+//    ofxOscMessage m;
+//    m.setAddress( "/kinect/" + action );
+//    m.addIntArg( kinect.getDeviceId() );
+//    m.addIntArg( blobId );
+//    m.addIntArg( cellPosition.x );
+//    m.addIntArg( cellPosition.y );
+//    m.addFloatArg( position.x );
+//    m.addFloatArg( position.y );
+//    m.addFloatArg( position.z );
+//    m.addIntArg( columns );
+//    m.addIntArg( rows );
+//    try {
+//        sender.sendMessage(m, false);
+//    } catch ( int e ) {
+//        ofLogError() << "Failed to send OSC message";
+//    }
+//}
 
-void setupOsc( ofxOscSender &sender, string host, int port ) {
-    try {
-        sender.setup( host, port );
-    } catch ( int e ) {
-        ofSystemAlertDialog( "Failed to open OSC when opening " + host + ":" + ofToString( port, 0 ) );
-    }
-}
+//void setupOsc( ofxOscSender &sender, string host, int port ) {
+//    try {
+//        sender.setup( host, port );
+//    } catch ( int e ) {
+//        ofSystemAlertDialog( "Failed to open OSC when opening " + host + ":" + ofToString( port, 0 ) );
+//    }
+//}
 
 #pragma mark - Life Cycle
 
@@ -287,17 +287,17 @@ void ofApp::setup () {
     
     trackerEmitter.on += [this]( Emitters::BlobTracker::Args args ){
         send( websocketServer, kinect, "on", args.id, kinectViewGrid.getCellPosition( args.centroid ), args.centroid, gridColumnsSlider, gridRowsSlider );
-        send( oscSender, kinect, "on", args.id, kinectViewGrid.getCellPosition( args.centroid ), args.centroid, gridColumnsSlider, gridRowsSlider );
+        //send( oscSender, kinect, "on", args.id, kinectViewGrid.getCellPosition( args.centroid ), args.centroid, gridColumnsSlider, gridRowsSlider );
     };
    
     trackerEmitter.off += [this]( Emitters::BlobTracker::Args args ){
         send( websocketServer, kinect, "off", args.id, kinectViewGrid.getCellPosition( args.centroid ), args.centroid, gridColumnsSlider, gridRowsSlider );
-        send( oscSender, kinect, "off", args.id, kinectViewGrid.getCellPosition( args.centroid ), args.centroid, gridColumnsSlider, gridRowsSlider );
+        //send( oscSender, kinect, "off", args.id, kinectViewGrid.getCellPosition( args.centroid ), args.centroid, gridColumnsSlider, gridRowsSlider );
     };
 
     trackerEmitter.moved += [this]( Emitters::BlobTracker::Args args ){
         send( websocketServer, kinect, "moved", args.id, kinectViewGrid.getCellPosition( args.centroid ), args.centroid, gridColumnsSlider, gridRowsSlider );
-        send( oscSender, kinect, "moved", args.id, kinectViewGrid.getCellPosition( args.centroid ), args.centroid, gridColumnsSlider, gridRowsSlider );
+        //send( oscSender, kinect, "moved", args.id, kinectViewGrid.getCellPosition( args.centroid ), args.centroid, gridColumnsSlider, gridRowsSlider );
     };
     
     // OSC
@@ -307,7 +307,7 @@ void ofApp::setup () {
         if ( host.length() > 0 ) {
             hostLabel = host;
         }
-        setupOsc( oscSender, hostLabel, ofToInt( portLabel ) );
+        //setupOsc( oscSender, hostLabel, ofToInt( portLabel ) );
     };
     
     portButtonEmitter.bind( updatePortButton );
@@ -316,10 +316,10 @@ void ofApp::setup () {
         if ( host.length() > 0 ) {
             portLabel = host;
         }
-        setupOsc( oscSender, hostLabel, ofToInt( portLabel ) );
+        //setupOsc( oscSender, hostLabel, ofToInt( portLabel ) );
     };
     
-    setupOsc( oscSender, hostLabel, ofToInt( portLabel ) );
+    //setupOsc( oscSender, hostLabel, ofToInt( portLabel ) );
 
 }
 
